@@ -6,32 +6,27 @@ from models.ingredient import Ingredient
 
 class MenuData:
     def __init__(self, source_path: str) -> None:
-        with open(source_path) as menuPath:
-            menu_base = csv.reader(menuPath, delimiter=",")
-            cabecalho_menu = next(menu_base)
-            dishes = self.make_dishes(menu_base, cabecalho_menu)
-        self.menu = menu_base
-        self.cabecalho = cabecalho_menu
+        with open(source_path, 'r') as menuPath:
+            menu_base = list(csv.reader(menuPath, delimiter=","))
+        menu_base_list = menu_base[1:]
+        dishes = self.make_dishes(menu_base_list)
+        self.menu = menu_base_list
         self.dishes = dishes
 
-    def make_dishes(self, menu, cabecalho) -> set:
-        dish = cabecalho.index('dish')
-        price = cabecalho.index('price')
-        ingredient = cabecalho.index('ingredient')
-        recipe_amount = cabecalho.index('recipe_amount')
+    def make_dishes(self, menu) -> set:
         dishes = set()
         recipe = ''
         instanceDish = None
         for data in menu:
-            if recipe != data[dish]:
-                recipe = data[dish]
-                instanceDish = Dish(recipe, float(data[price]))
-            instanceIngredient = Ingredient(data[ingredient])
+            if recipe != data[0]:
+                recipe = data[0]
+                instanceDish = Dish(recipe, float(data[1]))
+            instanceIngredient = Ingredient(data[2])
             instanceDish.add_ingredient_dependency(
-                instanceIngredient, int(data[recipe_amount]))
+                instanceIngredient, int(data[3]))
             dishes.add(instanceDish)
         return dishes
 
 
 if __name__ == "__main__":
-    teste = MenuData('./tests/mocks/menu_base_data.csv')
+    teste = MenuData('./data/menu_base_data.csv')

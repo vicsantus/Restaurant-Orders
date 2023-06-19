@@ -2,6 +2,7 @@ from typing import Dict, List
 
 from services.inventory_control import InventoryMapping
 from services.menu_data import MenuData
+from models.ingredient import Restriction
 
 DATA_PATH = "data/menu_base_data.csv"
 INVENTORY_PATH = "data/inventory_base_data.csv"
@@ -26,4 +27,24 @@ class MenuBuilder:
 
     # Req 4
     def get_main_menu(self, restriction=None) -> List[Dict]:
-        pass
+        full_list = [{
+            "dish_name": dish.name,
+            "ingredients": dish.get_ingredients(),
+            "price": dish.price,
+            "restrictions": dish.get_restrictions()
+        } for dish in self.menu_data.dishes if all(  # 1
+            ing in set(self.inventory.inventory.keys())
+            for ing in dish.get_ingredients())]
+        # 1: Só adiciona a dish caso esteja em inventory_path
+
+        if not restriction:
+            return full_list
+
+        return [dish for dish in full_list if restriction
+                not in dish["restrictions"]]
+
+
+if __name__ == "__main__":
+    teste = MenuBuilder()
+    restr = Restriction.ANIMAL_MEAT
+    print(teste.get_main_menu())
