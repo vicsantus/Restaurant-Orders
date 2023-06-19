@@ -39,16 +39,3 @@ class Dish:
 
     def get_ingredients(self):
         return set(self.recipe.keys())
-
-
-if __name__ == "__main__":
-    teste1 = Dish("Jorge", 20.0)
-    print(teste1)
-    print(teste1.name)
-    print(teste1.price)
-    print(teste1.recipe)
-    ingre1 = Ingredient("presunto")
-    teste1.add_ingredient_dependency(ingre1, 2)
-    print(teste1.recipe)
-    print(teste1.get_ingredients())
-    print(teste1.get_restrictions())
